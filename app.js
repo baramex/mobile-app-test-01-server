@@ -73,4 +73,11 @@ io.on("connection", (socket) => {
             console.log("Socket " + socket.id + " is not authorized to connect to " + data.id);
         }
     });
+
+    socket.on("location", (data) => {
+        const otherSocket = io.sockets.sockets.get(data.id);
+        if (otherSocket && otherSocket.rooms.has(socket.id) && socket.rooms.has(data.id)) {
+            otherSocket.emit("location", { id: socket.id, location: data.location });
+        }
+    });
 });
