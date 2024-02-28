@@ -21,6 +21,16 @@ io.on("connection", (socket) => {
                 }
             }
         }
+        const connections = io.sockets.adapter.rooms.get(socket.id);
+        if (connections) {
+            for (const id of connections) {
+                const otherSocket = io.sockets.sockets.get(id);
+                if (otherSocket) {
+                    otherSocket.leave(socket.id);
+                    otherSocket.emit("connectionRejected", { message: "Client disconnected" });
+                }
+            }
+        }
         console.log("Socket " + socket.id + " disconnected");
     });
 
